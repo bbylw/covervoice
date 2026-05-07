@@ -117,6 +117,11 @@ Bugs, layout issues, new layout requests — Issues and PRs welcome. Priorities:
 - Document pitfalls in `checklist.md` under the right P0/P1/P2/P3 tier
 - New themes go in `themes.md` with suggested use cases
 
+## Acknowledgments
+
+- TTS voice synthesis powered by [edge-tts](https://github.com/rany2/edge-tts)
+- Typography aesthetic inspired by [Guizang](https://x.com/op7418)'s guizang-ppt-skill
+
 ## License
 
 MIT © 2026 [bbylw](https://github.com/bbylw)
