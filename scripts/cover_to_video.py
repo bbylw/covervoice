@@ -5,8 +5,11 @@ Uses FFmpeg to create a video where the static cover image is displayed
 for the full duration of the audio track. Output is 1080x1920 (9:16).
 
 Requirements:
-    pip install pillow
-    FFmpeg must be installed and available in PATH.
+    FFmpeg (with bundled ffprobe) must be installed and on PATH.
+        Windows: winget install Gyan.FFmpeg
+        macOS:   brew install ffmpeg
+        Linux:   sudo apt install ffmpeg
+    No Python packages are required (only the standard library).
 
 Usage:
     python cover_to_video.py --image cover.png --audio voice.mp3 --out video.mp4
@@ -92,15 +95,17 @@ def main() -> int:
 
     out.parent.mkdir(parents=True, exist_ok=True)
 
-    # Check FFmpeg availability
-    try:
-        subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("ERROR: FFmpeg not found in PATH. Please install FFmpeg first.", file=sys.stderr)
-        print("  Windows: winget install Gyan.FFmpeg", file=sys.stderr)
-        print("  macOS:   brew install ffmpeg", file=sys.stderr)
-        print("  Linux:   sudo apt install ffmpeg", file=sys.stderr)
-        return 1
+    # Check FFmpeg + ffprobe availability (both are needed)
+    for tool in ("ffmpeg", "ffprobe"):
+        try:
+            subprocess.run([tool, "-version"], capture_output=True, check=True)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print(f"ERROR: {tool} not found in PATH. Please install FFmpeg first.", file=sys.stderr)
+            print("  Windows: winget install Gyan.FFmpeg", file=sys.stderr)
+            print("  macOS:   brew install ffmpeg", file=sys.stderr)
+            print("  Linux:   sudo apt install ffmpeg", file=sys.stderr)
+            print("  (Official FFmpeg builds bundle ffprobe; if it is missing, reinstall a complete build.)", file=sys.stderr)
+            return 1
 
     try:
         duration = get_audio_duration(audio)

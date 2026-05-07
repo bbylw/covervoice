@@ -1,8 +1,10 @@
 # Yingsheng · Short Video Cover + Voiceover Skill
 
-A Claude Code / Codex skill for generating **single-file HTML 9:16 vertical short video covers** with an "**editorial magazine × electronic ink**" aesthetic — like a *Monocle* cover infused with code.
+> 🌏 **中文版本: [README.md](./README.md)**
 
-> Derived from guizang-ppt-skill by [Guizang](https://x.com/op7418), preserving the magazine typography aesthetic while reimagining it for 9:16 vertical content.
+A Claude Code / Codex skill for generating **single-file HTML 9:16 vertical short video covers**, automatically synthesizing TTS voiceover, and producing an MP4 video. The aesthetic is "**editorial magazine × electronic ink**" — like a *Monocle* cover infused with code, that now also talks.
+
+> Derived from guizang-ppt-skill by [Guizang](https://x.com/op7418), preserving the magazine typography aesthetic while reimagining it for 9:16 vertical content, plus integrated edge-tts voiceover and FFmpeg video assembly.
 
 ## Features
 
@@ -13,20 +15,24 @@ A Claude Code / Codex skill for generating **single-file HTML 9:16 vertical shor
 - 🧩 **6 cover layouts**: Center Hero / Top-Heavy / Big Quote / Big Number / Split Visual / Image Overlay
 - 🖼 **Optional image generation**: 9:16 vertical backgrounds, portraits, atmospheric scenes
 - 📄 **Single HTML file**: no build step, no server needed, open in browser directly
+- 🎙 **TTS voiceover**: synthesize edge-tts speech (MP3) directly from your cover copy — Mandarin, English, regional dialects, with rate / volume tuning
+- 🎬 **One-shot video assembly**: FFmpeg merges the cover screenshot + TTS audio into a 1080×1920 MP4 short video
 
 ## When to Use
 
-**✅ Good for**: TikTok/Reels/Shorts covers, podcast promo cards, course thumbnails, 9:16 posters, livestream announcement graphics
+**✅ Good for**: TikTok / Reels / Shorts / Bilibili / Xiaohongshu covers, podcast promo cards, course thumbnails, 9:16 posters, livestream announcement graphics, **automated short-video production with voiceover**, news briefs, knowledge bites, product intros
 
-**❌ Not for**: 16:9 horizontal covers (use guizang-ppt-skill), multi-page content, complex interactive animations
+**❌ Not for**: 16:9 horizontal covers (use guizang-ppt-skill), multi-page content, complex multi-shot editing — this skill produces a single static cover + single voice track packaged as a lightweight video
 
 ## Installation
 
 ### Option 1: One-line install (recommended)
 
 ```bash
-npx skills add https://github.com/bbylw/covervoice --skill covervoice
+npx skills add bbylw/covervoice
 ```
+
+> Powered by the [Vercel Labs `skills` CLI](https://github.com/vercel-labs/skills). It automatically fetches `SKILL.md` and the asset/script directories into the right skills folder for each supported agent (Claude Code: `~/.claude/skills/`; Codex / Amp / Cursor / Continue etc. are also supported).
 
 ### Option 2: Paste this to your AI
 
@@ -34,14 +40,23 @@ npx skills add https://github.com/bbylw/covervoice --skill covervoice
 >
 > 1. Make sure `~/.claude/skills/` exists (create if not)
 > 2. Run `git clone https://github.com/bbylw/covervoice.git ~/.claude/skills/covervoice`
-> 3. Verify: `ls ~/.claude/skills/covervoice/` should show `SKILL.md`, `assets/`, `references/`
+> 3. Verify: `ls ~/.claude/skills/covervoice/` should show `SKILL.md`, `assets/`, `scripts/`, `references/`
 > 4. Tell me when done — phrases like "make a short video cover" will trigger this skill
 
 ### Option 3: Manual CLI
 
 ```bash
+# Claude Code
 git clone https://github.com/bbylw/covervoice.git ~/.claude/skills/covervoice
+
+# Codex CLI
+git clone https://github.com/bbylw/covervoice.git ~/.codex/skills/covervoice
+
+# Amp / generic agent skills directory
+git clone https://github.com/bbylw/covervoice.git ~/.agents/skills/covervoice
 ```
+
+> On Windows, replace `~` with `%USERPROFILE%` (cmd) or `$HOME` (PowerShell).
 
 ### Trigger Phrases
 
@@ -49,6 +64,9 @@ git clone https://github.com/bbylw/covervoice.git ~/.claude/skills/covervoice
 - "generate a 9:16 cover"
 - "vertical poster"
 - "TikTok / Xiaohongshu cover"
+- "generate a short video with voiceover"
+- "TTS voiceover video"
+- "merge cover image + voice into a video"
 
 ## Workflow
 
@@ -59,8 +77,9 @@ The skill guides through a structured workflow:
 3. **Fill content** — choose from 6 layout skeletons, paste and adapt (class preflight first)
 4. **Optional imagery** — in Codex, ask if user wants GPT-M 2.0 to generate 9:16 images
 5. **Self-check** — follow `references/checklist.md`, P0 issues must pass
-6. **Preview** — open in browser, auto-scaled
-7. **Export** — F11 fullscreen then screenshot, or DevTools capture
+6. **Preview & export** — open in browser, auto-scaled; F11 fullscreen then screenshot, or DevTools capture
+7. **TTS voiceover** — extract cover copy, run `scripts/tts.py` to generate MP3 (Mandarin / English / dialects, rate & volume tunable)
+8. **Assemble video** — run `scripts/cover_to_video.py` to merge the cover screenshot + TTS audio into a 1080×1920 MP4 in one shot
 
 See [`SKILL.md`](./SKILL.md) for details.
 
@@ -69,10 +88,13 @@ See [`SKILL.md`](./SKILL.md) for details.
 ```
 covervoice/
 ├── SKILL.md              ← Main skill file: workflow, principles, pitfalls
-├── README.md             ← This file (Chinese)
-├── README.en.md          ← English readme
+├── README.md             ← Chinese readme
+├── README.en.md          ← This file
 ├── assets/
 │   └── template.html     ← Full working seed HTML (CSS + WebGL + fonts pre-configured)
+├── scripts/
+│   ├── tts.py            ← Edge TTS voiceover (text → MP3)
+│   └── cover_to_video.py ← Cover image + audio → MP4 assembly
 └── references/
     ├── components.md     ← Component manual (typography, colors, icons, callout, ghost, animations)
     ├── layouts.md        ← 6 cover layout skeletons (copy-paste ready)
@@ -94,6 +116,18 @@ Pick one from `references/themes.md` — **no custom hex values allowed**, prote
 | 🌙 Dune | Art / design / creative / fashion |
 
 Swap theme by replacing the 6 lines in `:root{}` at the top of `template.html`; everything else uses `var(--...)`.
+
+## Dependencies
+
+- **Browser** — for previewing the cover and taking screenshots (any modern Chromium / Firefox / Safari)
+- **Python 3.8+** with `edge-tts`:
+  ```bash
+  pip install edge-tts
+  ```
+- **FFmpeg** (must be on PATH; `ffprobe` is bundled with FFmpeg in all official builds):
+  - Windows: `winget install Gyan.FFmpeg`
+  - macOS: `brew install ffmpeg`
+  - Linux: `sudo apt install ffmpeg`
 
 ## Core Design Principles
 

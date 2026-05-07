@@ -56,7 +56,9 @@
       flex-shrink: 0;
     }
 
-    /* ============ 封面容器：固定 1080 x 1920 ============ */
+    /* ============ 封面容器：固定 1080 x 1920 ============
+     #cover 自身有兜底 background（var(--ink) 或 var(--paper)），
+     canvas#bg 作为子元素以 z-index:0 覆在其上，WebGL 流体背景透出。 */
     #cover {
       width: 1080px;
       height: 1920px;
@@ -669,16 +671,16 @@
 <body>
 
   <div id="preview-wrap">
-    <canvas id="bg" class="bg"></canvas>
-
     <!-- ============================================================
        封面插入区 · 修改 id="cover" 的 class 和内部内容
        布局类（六选一）：layout-center / layout-topheavy / layout-quote
                        / layout-stat / layout-split-v / layout-overlay
        主题（二选一）：dark / light（可再加 hero）
+       canvas#bg 必须留在 #cover 内部第一个，让 WebGL 流体背景能透出
        ============================================================ -->
 
     <div id="cover" class="cover hero dark layout-center">
+      <canvas id="bg" class="bg"></canvas>
       <div class="content">
 
         <div class="top-zone">
@@ -733,7 +735,7 @@ float noise(vec2 p){
 float fbm(vec2 p){
   float v=0.0,a=0.5;
   mat2 m=mat2(0.80,0.60,-0.60,0.80);
-  for(int i=0;i;i<5;i++){v+=a*noise(p);p=m*p*2.02;a*=0.5;}
+  for(int i=0;i<5;i++){v+=a*noise(p);p=m*p*2.02;a*=0.5;}
   return v;
 }
 void main(){

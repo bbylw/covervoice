@@ -29,8 +29,10 @@
 ### 方式一：一行命令安装（推荐）
 
 ```bash
-npx skills add https://github.com/bbylw/covervoice --skill covervoice
+npx skills add bbylw/covervoice
 ```
+
+> 基于 [Vercel Labs `skills` CLI](https://github.com/vercel-labs/skills),会自动把仓库的 `SKILL.md` + 资源文件拉取到对应 agent 的 skills 目录(Claude Code: `~/.claude/skills/`,Codex / Amp 等同样支持)。
 
 ### 方式二：把下面这段话直接发给 AI
 
@@ -44,8 +46,17 @@ npx skills add https://github.com/bbylw/covervoice --skill covervoice
 ### 方式三：手动命令行
 
 ```bash
+# Claude Code
 git clone https://github.com/bbylw/covervoice.git ~/.claude/skills/covervoice
+
+# Codex CLI (~/.codex/skills 或自定义 skills 目录)
+git clone https://github.com/bbylw/covervoice.git ~/.codex/skills/covervoice
+
+# Amp / 通用 agent skills 目录
+git clone https://github.com/bbylw/covervoice.git ~/.agents/skills/covervoice
 ```
+
+> Windows 把 `~` 替换为 `%USERPROFILE%`，或用 PowerShell 的 `$HOME`。
 
 ### 触发方式
 

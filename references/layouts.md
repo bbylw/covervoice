@@ -187,7 +187,7 @@ layouts.md 使用的所有类（`h-cover` / `h-cover-en` / `h-sub` / `lead` / `b
     </div>
     <div class="mid-zone">
       <blockquote class="anim anim-d2">
-        "没有交接，，<br>所有人都在构建。"
+        "没有交接，<br>所有人都在构建。"
       </blockquote>
       <div class="accent-line anim anim-d3" style="margin-inline:auto"></div>
       <p class="lead anim anim-d4" style="max-width:640px;opacity:.55">
@@ -332,6 +332,11 @@ layouts.md 使用的所有类（`h-cover` / `h-cover-en` / `h-sub` / `lead` / `b
 - 文字集中在下半部分，`mid-zone` 用 `justify-content:flex-end`
 - 背景图必须是暗色调或有足够暗区，否则文字看不清
 - 可加 `hero` 类降低遮罩透明度，让背景图更明显
+
+**⚠️ z-index 注意**：
+- `canvas.bg`(WebGL 流体背景) 和 这张 `<figure class="frame-img">` 都是 z-index:0
+- 由于 figure 在 DOM 顺序里写在 canvas 之后,**WebGL 会被全幅背景图遮住**——这是预期行为
+- 如果你想保留 WebGL 流体并配少量装饰图,改用 Layout E(上下分栏)而不是 Layout F
 
 ---
 
