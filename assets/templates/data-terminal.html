@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[必填] 替换为封面标题 · Data Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@800;900&family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============ 主题色:数据终端(青绿信号) ============ */
+    :root {
+      --void:    #07090d;
+      --panel:   #0d1117;
+      --signal:  #00ff88;
+      --grid:    rgba(0,255,200,.08);
+      --paper:   #ffffff;
+      --muted:   rgba(255,255,255,.55);
+
+      --serif: "Noto Serif SC", "Playfair Display", serif;
+      --sans:  "Noto Sans SC", system-ui, sans-serif;
+      --mono:  "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100vh; background: #121212;
+      display: flex; justify-content: center; align-items: flex-start;
+      padding: 16px; overflow-x: hidden;
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    #preview-wrap { transform-origin: top center; position: relative; flex-shrink: 0; }
+
+    #cover {
+      width: 1080px; height: 1920px;
+      position: relative; overflow: hidden;
+      background: var(--void); color: var(--paper);
+      flex-shrink: 0;
+    }
+
+    /* 终端网格背景 */
+    .grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 90px 90px;
+      mask-image: radial-gradient(ellipse 90% 70% at 50% 45%, #000 55%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 45%, #000 55%, transparent 100%);
+      z-index: 1;
+    }
+
+    /* 顶部数据头 */
+    .data-header {
+      position: relative; z-index: 5;
+      padding: 130px 78px 0;
+    }
+    .status {
+      color: var(--signal); font-family: var(--mono);
+      font-size: 32px; letter-spacing: .22em;
+      display: flex; align-items: center; gap: 18px;
+    }
+    .status::before {
+      content: ''; width: 18px; height: 18px;
+      background: var(--signal); border-radius: 50%;
+      box-shadow: 0 0 24px var(--signal);
+      animation: blink 1.6s infinite;
+    }
+
+    .session-row {
+      display: flex; gap: 24px; margin-top: 28px;
+      font-family: var(--mono); font-size: 22px;
+      letter-spacing: .14em; color: var(--muted);
+      text-transform: uppercase;
+    }
+    .session-row .seg { padding-right: 24px; border-right: 1px solid rgba(255,255,255,.12); }
+    .session-row .seg:last-child { border-right: none; }
+
+    .main-headline {
+      font-family: var(--serif); font-weight: 900;
+      font-size: 138px; line-height: 1.06;
+      margin-top: 60px;
+      border-left: 24px solid var(--signal);
+      padding-left: 36px; letter-spacing: -.01em;
+    }
+
+    /* 中部模拟柱状图 */
+    .chart-block {
+      position: relative; z-index: 5;
+      margin: 90px 78px 0;
+      height: 380px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.02);
+      padding: 36px;
+      display: flex; flex-direction: column;
+    }
+    .chart-meta {
+      display: flex; justify-content: space-between;
+      font-family: var(--mono); font-size: 22px;
+      letter-spacing: .14em; color: var(--muted);
+      text-transform: uppercase; margin-bottom: 24px;
+    }
+    .chart-meta .delta { color: var(--signal); }
+    .bars {
+      flex: 1; display: flex; align-items: flex-end;
+      gap: 22px;
+    }
+    .bar {
+      flex: 1; background: var(--signal);
+      box-shadow: 0 0 36px rgba(0,255,136,.22);
+      position: relative;
+    }
+    .bar::after {
+      content: attr(data-label);
+      position: absolute; bottom: -36px; left: 0; right: 0;
+      text-align: center; font-family: var(--mono);
+      font-size: 18px; color: var(--muted);
+      letter-spacing: .12em;
+    }
+
+    /* 底部白色 CTA 标签 */
+    .footer-tag {
+      position: absolute; bottom: 110px; left: 78px; z-index: 6;
+      background: var(--paper); color: var(--void);
+      padding: 22px 44px; font-family: var(--serif);
+      font-weight: 900; font-size: 38px; letter-spacing: .04em;
+    }
+    .footer-meta {
+      position: absolute; bottom: 60px; left: 78px;
+      font-family: var(--mono); font-size: 22px;
+      color: var(--muted); letter-spacing: .14em;
+      text-transform: uppercase; z-index: 6;
+    }
+
+    @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+    .anim    { opacity: 0; animation: fadeUp .8s cubic-bezier(.22,1,.36,1) forwards }
+    .anim-d1 { animation-delay: .10s }
+    .anim-d2 { animation-delay: .25s }
+    .anim-d3 { animation-delay: .40s }
+    .anim-d4 { animation-delay: .55s }
+    .anim-d5 { animation-delay: .70s }
+    .anim-d6 { animation-delay: .85s }
+
+    #export-hint {
+      position: fixed; bottom: 12px; right: 12px; z-index: 100;
+      font-family: var(--mono); font-size: 12px; letter-spacing: .1em;
+      color: #888; background: rgba(0,0,0,.6);
+      padding: 8px 14px; border-radius: 4px; pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="preview-wrap">
+    <div id="cover">
+      <div class="grid"></div>
+
+      <div class="data-header">
+        <div class="status anim anim-d1">DATA SIGNAL · STREAMING</div>
+        <div class="session-row anim anim-d2">
+          <span class="seg">SESSION 04</span>
+          <span class="seg">2026 Q2</span>
+          <span class="seg">SAMPLE 12.4K</span>
+        </div>
+        <h1 class="main-headline anim anim-d3">数据背后<br>谁在左右<br>价格走向？</h1>
+      </div>
+
+      <div class="chart-block anim anim-d4">
+        <div class="chart-meta">
+          <span>Δ INDEX · 30D</span>
+          <span class="delta">+ 18.6%</span>
+        </div>
+        <div class="bars">
+          <div class="bar" style="height:38%" data-label="01"></div>
+          <div class="bar" style="height:62%" data-label="02"></div>
+          <div class="bar" style="height:48%" data-label="03"></div>
+          <div class="bar" style="height:84%" data-label="04"></div>
+          <div class="bar" style="height:71%" data-label="05"></div>
+          <div class="bar" style="height:96%" data-label="06"></div>
+        </div>
+      </div>
+
+      <div class="footer-tag anim anim-d5">本期 · 数据特辑</div>
+      <div class="footer-meta anim anim-d6">VOL.04 · LONG READ · 12 MIN</div>
+    </div>
+  </div>
+
+  <div id="export-hint">1080 × 1920 · Data Terminal</div>
+
+  <script>
+    const wrap = document.getElementById('preview-wrap');
+    function fitPreview() {
+      const pad = 32;
+      const scale = Math.min((window.innerWidth-pad)/1080, (window.innerHeight-pad)/1920, 1);
+      wrap.style.transform = `scale(${scale})`;
+      wrap.style.marginBottom = `${1920*(scale-1)}px`;
+    }
+    addEventListener('resize', fitPreview); fitPreview();
+  </script>
+</body>
+</html>

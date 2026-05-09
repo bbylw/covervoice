@@ -74,16 +74,43 @@ description: 映声 covervoice — 一站式生成"电子杂志 × 电子墨水"
 
 ### Step 2 · 拷贝模板
 
-从 `assets/template.html` 拷贝一份到目标位置（通常是 `项目/XXX/cover/index.html`），同时在同级建一个 `images/` 文件夹准备接图片。
+#### 2.0 · 选模板：主模板 vs 备选模板
 
+covervoice 提供 **1 主 + 5 备选**共 6 套封面模板，按情绪/调性二选一：
+
+| 模板 | 文件 | 情绪 | 何时选 |
+|------|------|------|--------|
+| **主模板** | `assets/template.html` | 杂志极简 / Monocle 风 | **默认首选**；不知道选啥就选它；有 5 主题 + 6 布局 + WebGL 流体 |
+| 备选 1 | `assets/templates/pulse-briefing.html` | 信号塔卷首速记（红蓝金） | 实时简报、专题速记、播客每日栏目 |
+| 备选 2 | `assets/templates/bold-statement.html` | 重磅大字（黑红） | 单点强声明、重磅特辑、年度盘点 |
+| 备选 3 | `assets/templates/data-terminal.html` | 数据终端（终端绿） | 数据特辑、研究报告、技术拆解 |
+| 备选 4 | `assets/templates/editorial-documentary.html` | 纪实人文（暗红+衬线） | 长读专栏、纪录连载、人物特写 |
+| 备选 5 | `assets/templates/gilded-glass.html` | 鎏金毛玻璃（金+深蓝夜） | 卷首特辑、奢华品牌、年度旗舰 |
+
+**判断流程**：
+- 用户没特别要求 → **直接用主模板**
+- 用户明确要求强情绪/特定氛围 → 查 `references/templates.md` 选备选模板
+- 备选模板**只能整体替换**，不允许在备选模板里再用主模板的 layout 类（类名不互通）
+
+详细对比、改文案位置、配音建议、禁用词清单见 `references/templates.md`。
+
+#### 2.1 · 拷贝命令
+
+主模板：
 ```bash
 mkdir -p "项目/XXX/cover/images"
 cp "<SKILL_ROOT>/assets/template.html" "项目/XXX/cover/index.html"
 ```
 
-`template.html` 是一个**完整可运行**的文件——CSS、WebGL shader、字体/图标 CDN 全已预设好，内部是一个示例封面（居中大标题布局）。
+备选模板（以鎏金毛玻璃为例）：
+```bash
+mkdir -p "项目/XXX/cover/images"
+cp "<SKILL_ROOT>/assets/templates/gilded-glass.html" "项目/XXX/cover/index.html"
+```
 
-#### 2.1 · 必改占位符
+`template.html` 是**完整可运行**的文件——CSS、WebGL shader、字体/图标 CDN 全已预设好，内部是一个示例封面（居中大标题布局）。备选模板每份也都是单文件、零依赖、可直接浏览器打开。
+
+#### 2.2 · 必改占位符
 
 拷贝后立刻改掉以下占位符：
 
@@ -91,7 +118,11 @@ cp "<SKILL_ROOT>/assets/template.html" "项目/XXX/cover/index.html"
 | --------- | ------------------------------------------- | ------------ |
 | `<title>` | `[必填] 替换为封面标题 · Short Video Cover` | 实际封面标题 |
 
-#### 2.2 · 选定主题色（5 套预设 · 不允许自定义）
+> 备选模板的 `<title>` 后缀会标明风格（例如 `· Gilded Glass`），改时把整段 `[必填] ... · XXX` 整体替换为实际标题即可。
+
+#### 2.3 · 选定主题色（5 套预设 · 不允许自定义 · 仅适用主模板）
+
+> ⚠️ **5 套主题色预设只适用于主模板** `template.html`。备选模板每份有自己强烈的封闭色板（信号红蓝金 / 黑红 / 终端绿 / 暗红衬线 / 鎏金深蓝），改色会破坏视觉 DNA。如果需要换色，建议换一份备选模板，而不是去改它的 `:root`。
 
 本 skill **只允许从 5 套精心调配的预设里选一套**，不接受用户自定义 hex 值。
 
@@ -283,14 +314,21 @@ covervoice/
 ├── README.md             ← 中文说明文档
 ├── README.en.md          ← English readme
 ├── assets/
-│   └── template.html     ← 完整可运行模板（种子文件）
+│   ├── template.html     ← 主模板：杂志极简 / WebGL 流体 / 5 主题 / 6 布局
+│   └── templates/        ← 5 套备选风格化模板（单文件、零依赖）
+│       ├── pulse-briefing.html         ← 信号塔卷首速记（红蓝金）
+│       ├── bold-statement.html         ← 重磅大字（黑红）
+│       ├── data-terminal.html          ← 数据终端（终端绿 + 柱状图）
+│       ├── editorial-documentary.html  ← 纪实人文（暗红衬线 + 大引号）
+│       └── gilded-glass.html           ← 鎏金毛玻璃（金 + 深蓝夜）
 ├── scripts/
 │   ├── tts.py            ← Edge TTS 配音生成
 │   └── cover_to_video.py ← 封面图 + 音频 → MP4 合成
 └── references/
     ├── components.md     ← 组件手册（字体、色、图标、callout、ghost、highlight）
-    ├── layouts.md        ← 6 种封面布局骨架（可直接粘贴）
-    ├── themes.md         ← 5 套主题色预设（只能选不能自定义）
+    ├── layouts.md        ← 6 种封面布局骨架（仅主模板适用，可直接粘贴）
+    ├── templates.md      ← 5 套备选模板手册（选用判断 + 改文案位置 + 禁用词清单）
+    ├── themes.md         ← 5 套主题色预设（仅主模板适用，只能选不能自定义）
     ├── image-prompts.md  ← 9:16 配图类型、尺寸和基础提示词
     └── checklist.md      ← 质量检查清单（封面 P0/P1/P2/P3 + 配音 + 视频检查项）
 ```
@@ -298,12 +336,16 @@ covervoice/
 **加载顺序建议**：
 
 1. 先读完 `SKILL.md`（这个文件）了解整体
-2. Step 1 需求澄清完成后，读 `themes.md` 帮用户选定一套主题色
-3. **动手前 Read `assets/template.html` 的 `<style>` 块**——这是类名的唯一来源
-4. 读 `layouts.md` 挑布局（顶部有 Pre-flight 类名清单）
+2. Step 1 需求澄清完成后，根据情绪/调性决定走主模板还是备选模板：
+   - 走主模板 → 读 `themes.md` 帮用户选定一套主题色
+   - 走备选模板 → 读 `references/templates.md` 选定哪一套风格化模板
+3. **动手前 Read 所选模板的 `<style>` 块**——这是类名的唯一来源
+   - 主模板：`assets/template.html`
+   - 备选模板：`assets/templates/<风格名>.html`
+4. 主模板读 `layouts.md` 挑布局（顶部有 Pre-flight 类名清单）；备选模板按 `templates.md` 中"改文案位置"段直接改
 5. 如果在 Codex 中生成配图，读 `image-prompts.md` 挑图片类型和基础提示词
-6. 细节调整时读 `components.md` 查组件
-7. 生成后读 `checklist.md` 自检
+6. 细节调整时读 `components.md` 查组件（备选模板已自带装饰，无需图标库）
+7. 生成后读 `checklist.md` 自检（备选模板还要对照 `templates.md` 末尾的"禁用词清单"复查文案）
 
 **动效相关**：封面使用纯 CSS `@keyframes` 入场动画，不需要 Motion One 库。每个元素加 `anim` + `anim-dN` 类即可控制 stagger 延迟。
 

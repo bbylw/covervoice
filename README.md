@@ -93,17 +93,37 @@ covervoice/
 ├── README.md             ← 本文件
 ├── README.en.md          ← 英文说明
 ├── assets/
-│   └── template.html     ← 完整可运行的种子 HTML（CSS + WebGL + 字体全配好）
+│   ├── template.html     ← 主模板：杂志极简 + WebGL 流体 + 5 主题 + 6 布局
+│   └── templates/        ← 5 套备选风格化模板（单文件 · 零依赖）
+│       ├── pulse-briefing.html         ← 信号塔卷首速记（红蓝金）
+│       ├── bold-statement.html         ← 重磅大字（黑红）
+│       ├── data-terminal.html          ← 数据终端（终端绿 + 柱状图）
+│       ├── editorial-documentary.html  ← 纪实人文（暗红衬线 + 大引号）
+│       └── gilded-glass.html           ← 鎏金毛玻璃（金 + 深蓝夜）
 ├── scripts/
 │   ├── tts.py            ← Edge TTS 配音生成（文案 → MP3）
 │   └── cover_to_video.py ← 封面图 + 音频 → MP4 合成
 └── references/
     ├── components.md     ← 组件手册（字体、色、图标、callout、ghost、动效）
-    ├── layouts.md        ← 6 种封面布局骨架（可直接粘贴）
-    ├── themes.md         ← 5 套主题色预设（只能选不能自定义）
+    ├── layouts.md        ← 6 种封面布局骨架（仅主模板，可直接粘贴）
+    ├── templates.md      ← 5 套备选模板手册（选用判断 + 改文案位置 + 禁用词清单）
+    ├── themes.md         ← 5 套主题色预设（仅主模板，只能选不能自定义）
     ├── image-prompts.md  ← 9:16 配图类型、尺寸和基础提示词
     └── checklist.md      ← 质量检查清单（P0 / P1 / P2 / P3 分级）
 ```
+
+### 1 主模板 + 5 备选模板
+
+| 模板 | 风格 | 何时选 |
+|------|------|--------|
+| **template.html** | 杂志极简 / Monocle 风 | **默认首选**，不知道选啥就用它 |
+| pulse-briefing.html | 信号塔卷首速记（红蓝金） | 实时简报 / 专题速记 / 播客每日栏目 |
+| bold-statement.html | 重磅大字（黑红） | 单点强声明 / 重磅特辑 / 年度盘点 |
+| data-terminal.html | 数据终端（终端绿） | 数据特辑 / 研究报告 / 技术拆解 |
+| editorial-documentary.html | 纪实人文（暗红衬线） | 长读专栏 / 纪录连载 / 人物特写 |
+| gilded-glass.html | 鎏金毛玻璃（金+深蓝夜） | 卷首特辑 / 奢华品牌 / 年度旗舰 |
+
+> 备选模板每份有自己的封闭色板（不可换主题色），但都遵守 covervoice 的字体系统、1080×1920 画布、自动缩放预览、TTS+视频合成流水线。文案禁用「新闻 / 突发 / 直播 / 调查」等词——详见 [`references/templates.md`](./references/templates.md) 末尾的禁用词清单。
 
 ## 主题色预设
 
