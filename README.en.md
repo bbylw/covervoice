@@ -12,7 +12,8 @@ A Claude Code / Codex skill for generating **single-file HTML 9:16 vertical shor
 - 🌊 **WebGL fluid background** powered by domain-warping FBM, mouse-interactive
 - 📐 **Fixed 1080 × 1920 canvas**, auto-scaled browser preview, screenshot-ready
 - 🎨 **5 theme presets**: Ink Classic / Indigo Porcelain / Forest Ink / Kraft Paper / Dune
-- 🧩 **6 cover layouts**: Center Hero / Top-Heavy / Big Quote / Big Number / Split Visual / Image Overlay
+- 🧩 **6 cover layouts** (main template): Center Hero / Top-Heavy / Big Quote / Big Number / Split Visual / Image Overlay
+- 🎭 **5 alternate templates** (full-style covers): Pulse Briefing · Bold Statement · Data Terminal · Editorial Documentary · Gilded Glass — pick one when the main magazine-minimal template doesn't match the mood
 - 🖼 **Optional image generation**: 9:16 vertical backgrounds, portraits, atmospheric scenes
 - 📄 **Single HTML file**: no build step, no server needed, open in browser directly
 - 🎙 **TTS voiceover**: synthesize edge-tts speech (MP3) directly from your cover copy — Mandarin, English, regional dialects, with rate / volume tuning
@@ -20,7 +21,7 @@ A Claude Code / Codex skill for generating **single-file HTML 9:16 vertical shor
 
 ## When to Use
 
-**✅ Good for**: TikTok / Reels / Shorts / Bilibili / Xiaohongshu covers, podcast promo cards, course thumbnails, 9:16 posters, livestream announcement graphics, **automated short-video production with voiceover**, news briefs, knowledge bites, product intros
+**✅ Good for**: TikTok / Reels / Shorts / Bilibili / Xiaohongshu covers, podcast promo cards, course thumbnails, 9:16 posters, livestream announcement graphics, **automated short-video production with voiceover**, editorial briefings, knowledge bites, product intros
 
 **❌ Not for**: 16:9 horizontal covers (use guizang-ppt-skill), multi-page content, complex multi-shot editing — this skill produces a single static cover + single voice track packaged as a lightweight video
 
@@ -73,8 +74,8 @@ git clone https://github.com/bbylw/covervoice.git ~/.agents/skills/covervoice
 The skill guides through a structured workflow:
 
 1. **Clarify requirements** — 5 questions: topic, subtitle, platform, theme color, constraints
-2. **Copy template** — `assets/template.html` → project dir, update `<title>`, pick theme
-3. **Fill content** — choose from 6 layout skeletons, paste and adapt (class preflight first)
+2. **Pick & copy template** — main template `assets/template.html` (default) **or** one of the 5 alternates in `assets/templates/`; copy to project dir, update `<title>`, pick theme (main template only)
+3. **Fill content** — main template: choose from 6 layout skeletons (class preflight first); alternate template: edit copy in-place per `references/templates.md`
 4. **Optional imagery** — in Codex, ask if user wants GPT-M 2.0 to generate 9:16 images
 5. **Self-check** — follow `references/checklist.md`, P0 issues must pass
 6. **Preview & export** — open in browser, auto-scaled; F11 fullscreen then screenshot, or DevTools capture
@@ -91,17 +92,37 @@ covervoice/
 ├── README.md             ← Chinese readme
 ├── README.en.md          ← This file
 ├── assets/
-│   └── template.html     ← Full working seed HTML (CSS + WebGL + fonts pre-configured)
+│   ├── template.html     ← Main template: magazine-minimal + WebGL fluid + 5 themes + 6 layouts
+│   └── templates/        ← 5 alternate full-style templates (single-file, zero deps)
+│       ├── pulse-briefing.html         ← Pulse Briefing (red/blue/gold signal tower)
+│       ├── bold-statement.html         ← Bold Statement (black + red, oversized type)
+│       ├── data-terminal.html          ← Data Terminal (terminal green + bar chart)
+│       ├── editorial-documentary.html  ← Editorial Documentary (deep red + serif quote)
+│       └── gilded-glass.html           ← Gilded Glass (gold + deep blue night, glassmorphism)
 ├── scripts/
 │   ├── tts.py            ← Edge TTS voiceover (text → MP3)
 │   └── cover_to_video.py ← Cover image + audio → MP4 assembly
 └── references/
     ├── components.md     ← Component manual (typography, colors, icons, callout, ghost, animations)
-    ├── layouts.md        ← 6 cover layout skeletons (copy-paste ready)
-    ├── themes.md         ← 5 theme color presets (pick one, no custom hex)
+    ├── layouts.md        ← 6 cover layout skeletons (main template only, copy-paste ready)
+    ├── templates.md      ← 5 alternate template manual (when-to-pick + copy edit map + banned-word list)
+    ├── themes.md         ← 5 theme color presets (main template only, pick one, no custom hex)
     ├── image-prompts.md  ← 9:16 image types, sizes and base prompts
     └── checklist.md      ← Quality checklist (P0 / P1 / P2 / P3 tiers)
 ```
+
+### 1 main + 5 alternate templates
+
+| Template | Style | When to pick |
+|----------|-------|--------------|
+| **template.html** | Magazine-minimal / Monocle | **Default first choice**; pick this when in doubt |
+| pulse-briefing.html | Pulse Briefing (red/blue/gold) | Daily briefings, dispatches, podcast episode covers |
+| bold-statement.html | Bold Statement (black + red) | Single strong statement, flagship features, year-end picks |
+| data-terminal.html | Data Terminal (terminal green) | Data features, research reports, technical breakdowns |
+| editorial-documentary.html | Editorial Documentary (deep red + serif) | Long reads, documentary serials, profile pieces |
+| gilded-glass.html | Gilded Glass (gold + deep blue night) | Flagship features, luxury brands, annual editions |
+
+> Each alternate template ships with its own closed color palette (no theme switching), but all of them respect covervoice's typography system, 1080×1920 canvas, auto-scaled preview, and the same TTS + video assembly pipeline. Copy must avoid words like "news / breaking / live broadcast / investigation" — see the banned-word list at the end of [`references/templates.md`](./references/templates.md).
 
 ## Theme Presets
 
